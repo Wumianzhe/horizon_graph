@@ -4,8 +4,12 @@ import hashlib
 import sys
 import subprocess
 
-fluidColor = "blue"
-solidColor = "brown"
+fluidColor = "darkorchid"
+solidColor = "firebrick"
+inputColor = "blue"
+outputColor = "orange"
+globalOutputColor = "gold"
+globalInputColor = "teal"
 
 def objhash(o):
     return hashlib.md5(json.dumps(o).encode('utf8')).hexdigest()
@@ -26,22 +30,49 @@ def procNode(p):
 
     print("</TABLE>>]")
 
+def matNode(prefix, mat, materials):
+    if mat in materials[0]:
+        print("b_{} [label={},shape = box]".format(objhash(prefix + mat),mat))
+    if mat in materials[1]:
+        print("b_{} [label={},shape = ellipse]".format(objhash(prefix + mat),mat))
+
+def bufferCluster(prefix, buffers, materials, iColor = inputColor, oColor = outputColor)
+    print("subgraph cluster_{}i".format(prefix) + "{")
+    print("label=\"input\"")
+    print("bgcolor=\"{}\"".format(iColor))
+    for mat in buffers["input"]:
+        matNode(prefix,mat,stored)
+    print("}")
+
+    print("subgraph cluster_{}o".format(prefix) + "{")
+    print("label=\"output\"")
+    print("bgcolor=\"{}\"".format(oColor))
+    for mat in buffers["output"]:
+        matNode(prefix,mat,stored)
+    print("}")
+
+    for mat in buffers["other"]:
+        matNode(prefix,mat,stored)
+
+    return buffers["input"] + buffers["output"] + buffers["other"]
+
+def recipeCluster(prefix,cluster,materials)
+    print("subgraph \"cluster_{}\"".format(prefix + cluster["name"]) + "{")
+    print("label = \"{}\"".format(cluster["name"]))
+    buf = bufferCluster(prefix + cluster["name"],cluster["buffers"],materials)
+    for rec in cluster["recipes"]:
+        procNode(rec)
+    # linking inside
+    
 def convert(obj):
     # graph beginning
     print("digraph " + "GREG" + "{")
     print("rankdir = \"LR\"")
 
     # materials
-    stored = []
-    print("node [shape = box]")
-    stored.append(set(obj["stores"]["solids"]))
-    for s in obj["stores"]["solids"]:
-        print("s_{} [label = \"{}\"]".format(objhash(s),s))
-
-    print("node [shape = ellipse]")
-    stored.append(set(obj["stores"]["fluids"]))
-    for f in obj["stores"]["fluids"]:
-        print("s_{} [label = \"{}\"]".format(objhash(f),f))
+    stored = [set(obj["materials"]["solids"]), set(obj["materials"]["fluids"])]
+    # global buffers
+    glob_buf = bufferCluster("gl",obj["buffers"],stored,globalInputColor,globalOutputColor)
 
     recipeList = []
     # process nodes
