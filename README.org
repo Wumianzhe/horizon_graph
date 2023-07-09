@@ -1,0 +1,64 @@
+#+title: Readme
+#+author: Kopnov Alexandr
+#+date: 2023-07-09
+
+* Input spec
+Input is a ~json~ file which contains description of a factory you're building.
+
+** What exists
+~stores~ contains ~solids~ and ~fluids~, which have buffers inside the processing
+line, represented by separate nodes floating around. They are given priority
+when looking for recipe inputs/outputs.
+
+~processes~ is a list of recipes and clusters.
+
+*** Recipe
+A recipe is a record with fields:
++ machine: machine name (or anything else, really)
++ tier: voltage requirement
++ duration: time used, in seconds
++ inputs: array of arrays, containing pairs of material and amount
++ outputs: array of same form as inputs
+
+Example:
+#+begin_example
+{
+"machine":"Sieve"
+,"tier":"HV"
+,"duration":"30"
+,"inputs":[
+    ["AMPD","1"]
+]
+,"outputs":[
+    ["MREFD","0.9"],["TPC","0.7"]
+]}
+#+end_example
+
+*** Cluster
+Name comes from graphviz term for them, these are basically subfactories.
+Currently it's just a bunch of recipes bundled together in a box with a label.
+They help, a lot. But it's not enough as it is.
+
+Has fields:
++ cluster: name of cluster
++ processes: list of recipes.
+
+Currently only one layer of clusters is possible, as I did not need more yet. In
+theory it's easy to add recursion of arbitrary depth, but do so at your own risk
+
+** What needs to be
+Current goal is moving towards more cluster-oriented design. What I have is good, but
+if you look at [[file:platline.png][resulting graphs]], it's easy to notice some issues.
+
+I want to change how buffers work. Currently all buffers are equal, but with
+their positioning being semi-random, I need to group them together. So I need to
+split the buffers into 3 groups: input, output, and internal buffers.
+
+So each cluster, like recipe, has its own inputs and outputs, avoiding the mess
+caused by inter-line relationships.
+
+* Theming
+
+At this moment in time, graphs are primarily black and white, since I did not
+need (or want) to add colors yet. But with more complex graphs that becomes
+neccessary, as recipes blend together.
