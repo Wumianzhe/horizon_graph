@@ -37,27 +37,27 @@ def matNode(prefix, mat, materials):
     if mat in materials[1]:
         print("b_{} [label={},shape = ellipse]".format(objhash(prefix + mat),mat))
 
-def bufferCluster(prefix, buffers, materials, iColor = inputColor, oColor = outputColor)
+def bufferCluster(prefix, buffers, materials, iColor = inputColor, oColor = outputColor):
     print("subgraph cluster_{}i".format(prefix) + "{")
     print("label=\"input\"")
     print("bgcolor=\"{}\"".format(iColor))
     for mat in buffers["input"]:
-        matNode(prefix,mat,stored)
+        matNode(prefix,mat,materials)
     print("}")
 
     print("subgraph cluster_{}o".format(prefix) + "{")
     print("label=\"output\"")
     print("bgcolor=\"{}\"".format(oColor))
     for mat in buffers["output"]:
-        matNode(prefix,mat,stored)
+        matNode(prefix,mat,materials)
     print("}")
 
     for mat in buffers["other"]:
-        matNode(prefix,mat,stored)
+        matNode(prefix,mat,materials)
 
     return buffers["input"] + buffers["output"] + buffers["other"]
 
-def recipeCluster(prefix,cluster,materials)
+def recipeCluster(prefix,cluster,materials):
     print("subgraph \"cluster_{}\"".format(prefix + cluster["name"]) + "{")
     print("label = \"{}\"".format(cluster["name"]))
     buf = bufferCluster(prefix + cluster["name"],cluster["buffers"],materials)
@@ -74,7 +74,7 @@ def recipeCluster(prefix,cluster,materials)
             elif mat in materials[1]:
                 matColor = fluidColor
 
-            base = "b_{} -> p_{}:\"{}\"".format(objhash(prefix + mat),h,mat)
+            base = "b_{} -> p_{}:\"{}\"".format(objhash(prefix + cluster["name"] + mat),h,mat)
             if mat in buf:
                 print(base,"[color={}]".format(matColor))
             else:
@@ -89,7 +89,7 @@ def recipeCluster(prefix,cluster,materials)
             elif mat in materials[1]:
                 matColor = fluidColor
 
-            base = "p_{}:\"{}\" -> b_{}".format(h,mat,objhash(prefix+mat))
+            base = "p_{}:\"{}\" -> b_{}".format(h,mat,objhash(prefix+ cluster["name"] + mat))
             if mat in buf:
                 print(base,"[color={}]".format(matColor))
     print("}")
@@ -108,11 +108,13 @@ def convert(obj):
     recipeList = []
     # process clusters
     print("node [shape = plain]")
-    for cluster in obj["clusters"]:
-        recipeList.append(recipeCluster("",cluster,stored))
+    if "clusters" in obj:
+        for cluster in obj["clusters"]:
+            recipeList.append(recipeCluster("",cluster,stored))
     #process standalone recipes
-    for req in obj["recipes"]:
-        recipeList.append(procNode(req))
+    if "recipes" in obj:
+        for req in obj["recipes"]:
+            recipeList.append(procNode(req))
     # linking
     for proc in recipeList:
         h = objhash(proc)
