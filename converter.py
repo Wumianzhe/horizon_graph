@@ -29,6 +29,7 @@ def procNode(p):
         print("<TR><TD>{}</TD><TD PORT=\"{}\">{}</TD></TR>".format(o[0],o[0],o[1]))
 
     print("</TABLE>>]")
+    return {"inputs":[req[0] for req in p["inputs"]],"outputs":[req[0] for req in p["outputs"]]}
 
 def matNode(prefix, mat, materials):
     if mat in materials[0]:
@@ -63,6 +64,36 @@ def recipeCluster(prefix,cluster,materials)
     for rec in cluster["recipes"]:
         procNode(rec)
     # linking inside
+    for proc in cluster["recipes"]:
+        h = objhash(proc)
+        for req in proc["inputs"]:
+            mat = req[0]
+            matColor = "black"
+            if mat in materials[0]:
+                matColor = solidColor
+            elif mat in materials[1]:
+                matColor = fluidColor
+
+            base = "b_{} -> p_{}:\"{}\"".format(objhash(prefix + mat),h,mat)
+            if mat in buf:
+                print(base,"[color={}]".format(matColor))
+            else:
+                for source in cluster["recipes"]:
+                    if mat in [req[0] for req in source["outputs"]]:
+                        print("p_{}:\"{}\" -> p_{}:\"{}\" [color={}]".format(objhash(source),mat,h,mat,matColor))
+        for req in proc["outputs"]:
+            mat = req[0]
+            matColor = "black"
+            if mat in materials[0]:
+                matColor = solidColor
+            elif mat in materials[1]:
+                matColor = fluidColor
+
+            base = "p_{}:\"{}\" -> b_{}".format(h,mat,objhash(prefix+mat))
+            if mat in buf:
+                print(base,"[color={}]".format(matColor))
+    print("}")
+    return {"inputs":cluster["buffers"]["input"],"outputs":cluster["buffers"]["output"]}
     
 def convert(obj):
     # graph beginning
@@ -75,24 +106,17 @@ def convert(obj):
     glob_buf = bufferCluster("gl",obj["buffers"],stored,globalInputColor,globalOutputColor)
 
     recipeList = []
-    # process nodes
+    # process clusters
     print("node [shape = plain]")
-    for proc in obj["processes"]:
-        if "cluster" in proc:
-            print("subgraph \"cluster_{}\"".format(proc["cluster"]) + "{")
-            print("label = \"{}\"".format(proc["cluster"]))
-            recipeList+=proc["processes"]
-            for recipe in proc["processes"]:
-                procNode(recipe)
-            print("}")
-        else:
-            recipeList.append(proc)
-            procNode(proc)
+    for cluster in obj["clusters"]:
+        recipeList.append(recipeCluster("",cluster,stored))
+    #process standalone recipes
+    for req in obj["recipes"]:
+        recipeList.append(procNode(req))
     # linking
     for proc in recipeList:
         h = objhash(proc)
-        for req in proc["inputs"]:
-            mat = req[0]
+        for mat in proc["inputs"]:
             base = "s_{} -> p_{}:\"{}\"".format(objhash(mat),h,mat)
             if mat in stored[0]:
                 print(base,"[color={}]".format(solidColor))
@@ -102,8 +126,7 @@ def convert(obj):
                 for source in recipeList:
                     if mat in [req[0] for req in source["outputs"]]:
                         print("p_{}:\"{}\" -> p_{}:\"{}\"".format(objhash(source),mat,h,mat))
-        for req in proc["outputs"]:
-            mat = req[0]
+        for mat in proc["outputs"]:
             base = "p_{}:\"{}\" -> s_{}".format(h,mat,objhash(mat))
             if mat in stored[0]:
                 print(base,"[color={}]".format(solidColor))
