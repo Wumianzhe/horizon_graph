@@ -1,0 +1,336 @@
+{
+    "materials": {
+        "solids": ["PtMP","Pt","PdMP","Pd","PlatRes","Saltpeter","Os","Ir","Ru"]
+        ,"fluids": ["Dil. Sulfuric","Nitric","Ammonia","HCl","PdAm","KS2","Salt water","Chlorine"]
+    },
+    "buffers": {
+        "input": ["H","O","Water","PtMP","Saltpeter","KS2","Salt water"]
+        ,"output": ["Pt","Pd","Ir","Os","Ru"]
+        ,"other": []
+    }
+    ,"clusters": [
+        {
+        "name":"plat main"
+        ,"buffers": {
+            "input": ["PtMP","O","Water","Ca"],
+            "output": ["Pt","PlatRes","PdAm","CaCl"],
+            "other": []
+        }
+        ,"recipes": [
+            { "machine":"Mixer"
+              ,"tier":"LV"
+              ,"duration":"1.5"
+              ,"inputs":[
+                  ["Nitric","1000"],["Dil. Sulfuric","1000"]
+              ]
+              ,"outputs":[
+                  ["AqReg","2000"]
+              ]},
+            { "machine":"Large Ch.re."
+              ,"tier":"LV"
+              ,"duration":"16"
+              ,"inputs":[
+                  ["NO2","2000"],["O","1000"],["Water","1000"]
+              ]
+              ,"outputs":[
+                  ["Nitric","2000"]
+              ]
+            }
+            ,{ "machine":"Ch. re."
+               ,"tier":"LV"
+               ,"duration":"12.5"
+               ,"inputs":[
+                   ["PtMP","1"],["AqReg","1000"]
+               ]
+               ,"outputs":[
+                   ["PlatRes","0.11"],["PlC","1000"]
+               ]}
+            ,{ "machine":"Large Ch. re."
+               ,"tier":"HV"
+               ,"duration":"70"
+               ,"inputs":[
+                   ["PlC","18000"],["AmCl","3600"]
+               ]
+               ,"outputs":[
+                   ["PlatSalt","16"],["RePt","4"],["PdAm","3600"],["NO2","9000"],["Dil. Sulfuric","9000"]
+               ]}
+            ,{ "machine":"Sifter"
+               ,"tier":"LV"
+               ,"duration":"30"
+               ,"inputs":[
+                   ["PlatSalt","1"]
+               ]
+               ,"outputs":[
+                   ["RPS","0.9"]
+               ]}
+            ,{ "machine":"EBF"
+               ,"tier":"MV"
+               ,"duration":"10"
+               ,"inputs":[
+                   ["RPS","1"]
+               ]
+               ,"outputs":[
+                   ["PtMP","1"],["Chlorine","87"]
+               ]}
+            ,{ "machine":"Ch. re"
+               ,"tier":"LV"
+               ,"duration":"1.5"
+               ,"inputs":[
+                   ["RePt","4"],["Ca","1"]
+               ]
+               ,"outputs":[
+                   ["Pt","2"],["CaCl","3"]
+               ]}
+        ]
+    }
+        ,{
+            "name":"palladium"
+            ,"buffers": {
+                "input": ["PdAm","Ammonia","Formic"],
+                "output": ["Pd"],
+                "other": ["PdMP"]
+            }
+            ,"recipes": [
+                { "machine":"Ch. re"
+                  ,"tier":"LV"
+                  ,"duration":"112.5"
+                  ,"inputs":[
+                      ["PdMP","9"],["PdAm","9000"]
+                  ]
+                  ,"outputs":[
+                      ["PdSalt","16"],["RePd","2"]
+                  ]}
+                ,{ "machine":"Sifter"
+                   ,"tier":"LV"
+                   ,"duration":"30"
+                   ,"inputs":[
+                       ["PdSalt","1"]
+                   ]
+                   ,"outputs":[
+                       ["PdMP","0.95"]
+                   ]}
+                ,{ "machine":"Large Ch. re"
+                   ,"tier":"LV"
+                   ,"duration":"12.5"
+                   ,"inputs":[
+                       ["RePd","4"],["Formic","4000"]
+                   ]
+                   ,"outputs":[
+                       ["Pd","2"],["Ammonia","4000"],["Ethylene","1000"],["Water","1000"]
+                   ]}
+                ,{ "machine":"Ch. re"
+                   ,"tier":"LV"
+                   ,"duration":"12.5"
+                   ,"inputs":[
+                       ["PdMP","1"],["Ammonia","1000"]
+                   ]
+                   ,"outputs":[
+                       ["PdAm","1000"]
+                   ]}
+            ]
+        }
+        ,{
+            "name": "Residues"
+            ,"buffers": {
+                "input": ["PlatRes","Saltpeter","Salt water","KS2","HCl"],
+                "output": ["NaRuO","AcOs","IMR","RdS"],
+                "other": []
+            }
+            ,"recipes": [
+                { "machine":"EBF"
+                  ,"tier":"MV"
+                  ,"duration":"10"
+                  ,"inputs":[
+                      ["PlatRes","1"],["KS2","360"]
+                  ]
+                  ,"outputs":[
+                      ["RdS","360"],["LeachRes","1"]
+                  ]}
+                ,{ "machine":"EBF"
+                   ,"tier":"MV"
+                   ,"duration":"10"
+                   ,"inputs":[
+                       ["LeachRes","10"],["Saltpeter","10"],["Salt water","1000"]
+                   ]
+                   ,"outputs":[
+                       ["NaRuO","3"],["Rare res","6"],["Steam","1000"]
+                   ]}
+                ,{ "machine":"EBF"
+                   ,"tier":"MV"
+                   ,"duration":"5"
+                   ,"inputs":[
+                       ["Rare res","2"],["HCl","500"]
+                   ]
+                   ,"outputs":[
+                       ["IMR","1"],["AcOs","1000"]
+                   ]}
+            ]
+        }
+        ,{
+            "name": "Osmium"
+            ,"buffers": {
+                "input": ["AcOs","HCl"],
+                "output": ["Os","Chlorine"],
+                "other": []
+            }
+            ,"recipes": [
+                { "machine":"Distill"
+                  ,"tier":"IV"
+                  ,"duration":"7.5"
+                  ,"inputs":[
+                      ["AcOs","1000"]
+                  ]
+                  ,"outputs":[
+                      ["OsSol","100"],["Water","900"]
+                  ]}
+                ,{ "machine":"Ch. re."
+                   ,"tier":"LV"
+                   ,"duration":"15"
+                   ,"inputs":[
+                       ["OsSol","1000"],["HCl","6000"]
+                   ]
+                   ,"outputs":[
+                       ["Os","1"],["Chlorine","7000"],["Water","2000"]
+                   ]}
+            ]
+        }
+        ,{
+            "name": "Iridium"
+            ,"buffers": {
+                "input": ["IMR","AmCl","Ca","HCl"],
+                "output": ["Ir","Ammonia","CaCl"],
+                "other": []
+            }
+            ,"recipes": [
+                { "machine":"EBF"
+                  ,"tier":"MV"
+                  ,"duration":"10"
+                  ,"inputs":[
+                      ["IMR","1"]
+                  ]
+                  ,"outputs":[
+                      ["Sludge dust","1"],["IrO","1"]
+                  ]}
+                ,{ "machine":"Ch. re."
+                   ,"tier":"LV"
+                   ,"duration":"15"
+                   ,"inputs":[
+                       ["IrO","1"],["HCl","1000"]
+                   ]
+                   ,"outputs":[
+                       ["IrSol","1000"]
+                   ]}
+                ,{ "machine":"Ch. re."
+                   ,"tier":"LV"
+                   ,"duration":"15"
+                   ,"inputs":[
+                       ["IrSol","1000"],["AmCl","3000"]
+                   ]
+                   ,"outputs":[
+                       ["IrCl","1"],["Ammonia","3000"]
+                   ]}
+                ,{ "machine":"Ch. re."
+                   ,"tier":"EV"
+                   ,"duration":"15"
+                   ,"inputs":[
+                       ["IrCl","1"],["Ca","1"]
+                   ]
+                   ,"outputs":[
+                       ["Ir","1"],["CaCl","3000"],["MetSludge","1"]
+                   ]}
+            ]
+        }
+        ,{
+            "name": "Rutenium"
+            ,"buffers": {
+                "input": ["NaRuO","Steam","HCl"],
+                "output": ["Ru","Chlorine"],
+                "other": []
+            }
+            ,"recipes": [
+                { "machine":"Ch. re."
+                  ,"tier":"LV"
+                  ,"duration":"15"
+                  ,"inputs":[
+                      ["NaRuO","1"],["Chlorine","3000"]
+                  ]
+                  ,"outputs":[
+                      ["RuTetSol","3000"]
+                  ]}
+                ,{ "machine":"Oil Cracker"
+                   ,"tier":"HV"
+                   ,"duration":"7.5"
+                   ,"inputs":[
+                       ["RuTetSol","1000"],["Steam","1000"]
+                   ]
+                   ,"outputs":[
+                       ["Hot RuTetSol","2000"]
+                   ]}
+                ,{ "machine":"Distill"
+                   ,"tier":"HV"
+                   ,"duration":"75"
+                   ,"inputs":[
+                       ["Hot RuTetSol","9000"],["Steam","1000"]
+                   ]
+                   ,"outputs":[
+                       ["RuO4","7200"],["Salt","6"],["Water","1800"]
+                   ]}
+                ,{ "machine":"Solidifier"
+                   ,"tier":"LV"
+                   ,"duration":"1.65"
+                   ,"inputs":[
+                       ["RuO4","1000"]
+                   ]
+                   ,"outputs":[
+                       ["RuTet","1"]
+                   ]}
+                ,{ "machine":"Ch. re."
+                   ,"tier":"LV"
+                   ,"duration":"15"
+                   ,"inputs":[
+                       ["RuTet","1"],["HCl","6000"]
+                   ]
+                   ,"outputs":[
+                       ["Ru","1"],["Chlorine","6000"],["Water","2000"]
+                   ]}
+            ]
+        }
+        ,{
+            "name": "Acid trip"
+            ,"buffers": {
+                "input": ["CaCl","Chlorine","Ammonia","H"],
+                "output": ["HCl","Ca","AmCl"],
+                "other": []
+            }
+            ,"recipes": [
+                { "machine":"Electrolyzer"
+                  ,"tier":"MV"
+                  ,"duration":"1.35"
+                  ,"inputs":[
+                      ["CaCl","3"]
+                  ]
+                  ,"outputs":[
+                      ["Ca","1"],["Chlorine","2000"]
+                  ]}
+                ,{"machine":"Chem. reactor",
+                  "tier":"ULV",
+                  "duration":"3"
+                  ,"inputs":[
+                      ["H","1000"],["Chlorine","1000"]
+                  ]
+                  ,"outputs":[
+                      ["HCl","1000"]
+                  ]}
+                ,{ "machine":"Ch. re."
+                   ,"tier":"LV"
+                   ,"duration":"0.75"
+                   ,"inputs":[
+                       ["Ammonia","1000"],["HCl","1000"]
+                   ]
+                   ,"outputs":[
+                       ["AmCl","1000"]
+                   ]}
+            ]
+        }
+    ]
+}

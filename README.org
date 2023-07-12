@@ -2,63 +2,43 @@
 #+author: Kopnov Alexandr
 #+date: 2023-07-09
 
+* About
+
+Greg tech production lines are difficult to remember in their entirety, so I
+prefer to have a flowchart. It came to making graphs using =graphviz=, which can
+look good, but resulting labels are... verbose. This script converts =json=
+containing production line description into graphviz =.dot= file (and calls ~dot~ on
+it to transform to png).
+
 * Input spec
-Input is a ~json~ file which contains description of a factory you're building.
+Production line is almost recursively defined (but currently not recursively
+processed).
 
-** What exists
-~stores~ contains ~solids~ and ~fluids~, which have buffers inside the processing
-line, represented by separate nodes floating around. They are given priority
-when looking for recipe inputs/outputs.
+Each cluster has following fields:
++ name (ignored for top level)
++ buffers:
+  + input
+  + output
+  + other
++ recipes (optional for top level)
 
-~processes~ is a list of recipes and clusters.
+Production line (top level cluster) additionaly has fields
++ materials:
+  - solids
+  - fluids
++ clusters
 
-*** Recipe
-A recipe is a record with fields:
-+ machine: machine name (or anything else, really)
-+ tier: voltage requirement
-+ duration: time used, in seconds
-+ inputs: array of arrays, containing pairs of material and amount
-+ outputs: array of same form as inputs
+Parameters of recipe is:
++ machine
++ tier --- voltage tier
++ duration (in seconds)
++ inputs
++ outputs
 
-Example:
-#+begin_example
-{
-"machine":"Sieve"
-,"tier":"HV"
-,"duration":"30"
-,"inputs":[
-    ["AMPD","1"]
-]
-,"outputs":[
-    ["MREFD","0.9"],["TPC","0.7"]
-]}
-#+end_example
-
-*** Cluster
-Name comes from graphviz term for them, these are basically subfactories.
-Currently it's just a bunch of recipes bundled together in a box with a label.
-They help, a lot. But it's not enough as it is.
-
-Has fields:
-+ cluster: name of cluster
-+ processes: list of recipes.
-
-Currently only one layer of clusters is possible, as I did not need more yet. In
-theory it's easy to add recursion of arbitrary depth, but do so at your own risk
-
-** What needs to be
-Current goal is moving towards more cluster-oriented design. What I have is good, but
-if you look at [[file:platline.png][resulting graphs]], it's easy to notice some issues.
-
-I want to change how buffers work. Currently all buffers are equal, but with
-their positioning being semi-random, I need to group them together. So I need to
-split the buffers into 3 groups: input, output, and internal buffers.
-
-So each cluster, like recipe, has its own inputs and outputs, avoiding the mess
-caused by inter-line relationships.
+As an example, [[platline.json]] is provided.
 
 * Theming
 
-At this moment in time, graphs are primarily black and white, since I did not
-need (or want) to add colors yet. But with more complex graphs that becomes
-neccessary, as recipes blend together.
+At this moment in time, graphs are primarily black and white, other than inputs
+and outputs being colored to make them stand out, but I'm open to suggestions
+for better coloring.
