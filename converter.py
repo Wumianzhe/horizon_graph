@@ -41,21 +41,29 @@ def matNode(prefix, mat, materials):
     else:
         print("b_{} [label=\"{}\",shape = octagon]".format(objhash(prefix + mat),mat))
 
-def bufferCluster(prefix, buffers, materials, iColor = inputColor, oColor = outputColor):
-    print("subgraph \"cluster_{}i\"".format(prefix) + "{")
-    print("label=\"input\"")
-    print("bgcolor=\"{}\"".format(iColor))
+def bufferCluster(prefix, buffers, materials, iColor = inputColor, oColor = outputColor, group = False):
+    if group:
+        print("subgraph \"cluster_{}i\"".format(prefix) + "{")
+        print("label=\"input\"")
+        print("bgcolor=\"{}\"".format(iColor))
+    else:
+        print("node [style=\"filled\",fillcolor=\"{}\"]".format(iColor))
     for mat in buffers["input"]:
         matNode(prefix,mat,materials)
-    print("}")
+    if group:
+        print("}")
 
-    print("subgraph \"cluster_{}o\"".format(prefix) + "{")
-    print("label=\"output\"")
-    print("bgcolor=\"{}\"".format(oColor))
+        print("subgraph \"cluster_{}o\"".format(prefix) + "{")
+        print("label=\"output\"")
+        print("bgcolor=\"{}\"".format(oColor))
+    else:
+        print("node [style=\"filled\",fillcolor=\"{}\"]".format(oColor))
     for mat in buffers["output"]:
         matNode(prefix,mat,materials)
-    print("}")
+    if group:
+        print("}")
 
+    print("node [style=\"\"]")
     for mat in buffers["other"]:
         matNode(prefix,mat,materials)
 
@@ -108,7 +116,7 @@ def convert(obj):
     # materials
     matList = [set(obj["materials"]["solids"]), set(obj["materials"]["fluids"])]
     # global buffers
-    glob_buf = bufferCluster("gl",obj["buffers"],matList,globalInputColor,globalOutputColor)
+    glob_buf = bufferCluster("gl",obj["buffers"],matList,globalInputColor,globalOutputColor,True)
 
     recipeList = []
     # process clusters
@@ -160,7 +168,7 @@ def main():
             sys.stdout.flush()
             sys.stdout = old_stdout
 
-    subprocess.run(["dot",name + ".dot","-Tpng","-o",name+".png"])
+    subprocess.run(["dot",name + ".dot","-Tpdf","-o",name+".pdf"])
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
