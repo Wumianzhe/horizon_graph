@@ -8,11 +8,10 @@ Greg tech production lines are difficult to remember in their entirety, so I
 prefer to have a flowchart. It came to making graphs using =graphviz=, which can
 look good, but resulting labels are... verbose. This script converts =json=
 containing production line description into graphviz =.dot= file (and calls ~dot~ on
-it to transform to png).
+it to transform to pdf).
 
 * Input spec
-Production line is almost recursively defined (but currently not recursively
-processed).
+Production line is almost recursively defined.
 
 Each cluster has following fields:
 + name (ignored for top level)
@@ -20,13 +19,18 @@ Each cluster has following fields:
   + input
   + output
   + other
-+ recipes (optional for top level)
++ recipes (optional)
++ clusters (optional)
 
-Production line (top level cluster) additionaly has fields
-+ materials:
+But you should have recipes at least somewhere
+
+Production line (top level cluster) additionaly has field materials, with two lists:
   - solids
   - fluids
-+ clusters
+
+These are used to register materials. Not all materials have to be registered,
+but this allows materials to have distinct shapes and arrow colors (representing
+the way they are stored and transported)
 
 Parameters of recipe is:
 + machine
