@@ -15,10 +15,10 @@ class base:
         return hash(self.__key())
     def getInputs(self) -> list[tuple[str,str]]:
         """Returns pairs of material name and corresponding graph node"""
-        return [(req[0],"p_{}:{}".format(utils.hexHash(self),req[0])) for req in self.inputs]
+        return [(req[0],"p_{}:\"{}\"".format(utils.hexHash(self),req[0])) for req in self.inputs]
     def getOutputs(self)-> list[tuple[str,str]]:
         """Returns pairs of material name and corresponding graph node"""
-        return [(req[0],"p_{}:{}".format(utils.hexHash(self),req[0])) for req in self.outputs]
+        return [(req[0],"p_{}:\"{}\"".format(utils.hexHash(self),req[0])) for req in self.outputs]
 
     def __str__(self) -> str:
         """Graph element corresponding to recipe"""
@@ -26,11 +26,12 @@ class base:
         # header
         lines.extend(self.header())
 
-        # middle rows
-        lines.extend(self.intermediary())
         # io
-        lines.extend(self.ioBlock())
+        lines.extend(self.inputBlock())
+        lines.extend(self.outputBlock())
 
+        # middle rows
+        lines.extend(self.children())
         # linkage
         lines.extend(self.linking())
         # footer
@@ -41,20 +42,23 @@ class base:
         # header
         lines.append("p_{} [shape=plain,label = <".format(utils.hexHash(self)))
         lines.append("<TABLE>")
-        return lines
-
-    def intermediary(self) -> list[str]:
-        lines: list[str] = []
         headRow = Template("<TR><TD>$first</TD><TD>$second</TD></TR>")
         lines.append(headRow.substitute(first=self.machine,second=self.tier))
         lines.append(headRow.substitute(first="Duration:",second=self.duration + " sec"))
         return lines
 
-    def ioBlock(self) -> list[str]:
+    def children(self) -> list[str]:
         lines: list[str] = []
-        recRow = Template("<TR><TD>$name</TD><TD PORT=\"$name\">$amount</TD></TR>")
+        return lines
+    def inputBlock(self) -> list[str]:
+        lines: list[str] = []
+        recRow = Template("<TR><TD PORT=\"$name\">$name</TD><TD>$amount</TD></TR>")
         lines.append("<TR><TD COLSPAN=\"2\">Inputs</TD></TR>")
         lines.extend([recRow.substitute(name=req[0],amount=req[1]) for req in self.inputs])
+        return lines
+    def outputBlock(self) -> list[str]:
+        lines: list[str] = []
+        recRow = Template("<TR><TD>$name</TD><TD PORT=\"$name\">$amount</TD></TR>")
         lines.append("<TR><TD COLSPAN=\"2\">Outputs</TD></TR>")
         lines.extend([recRow.substitute(name=req[0],amount=req[1]) for req in self.outputs])
         return lines

@@ -3,13 +3,13 @@ import sys
 import json
 import subprocess
 import utils
-import cluster
+import line
 
 def convert(obj):
-    print(cluster.cluster(obj["clusters"][0],{}))
+    print(line.line(obj))
 
 def main():
-    name = '../test'
+    name = sys.argv[1]
     old_stdout = sys.stdout
     with open(name + ".json") as file:
         obj = json.load(file)
@@ -23,4 +23,7 @@ def main():
     # subprocess.run(["dot",name + ".dot","-Tpdf","-o",name+".pdf"])
 
 if __name__ == '__main__':
-    main()
+    if len(sys.argv) < 2:
+        print("Missing argument")
+    else:
+        main()

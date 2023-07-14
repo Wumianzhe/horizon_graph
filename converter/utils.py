@@ -5,7 +5,7 @@ def hexHash(obj):
 
 def matNode(prefix:str,mat:str,materials:dict[str,str],theme:dict[str,str]):
     shape = theme.get(materials.get(mat,"")+"Shape","octagon")
-    s = Template("\"b_$ha\" [label=$name,shape=$shape]")
+    s = Template("\"b_$ha\" [label=\"$name\",shape=$shape]")
     return s.substitute(ha=hexHash(prefix + mat),name=mat,shape=shape)
 
 def tuplify(listything):

@@ -23,9 +23,6 @@ class cluster(base):
     def __str__(self) -> str:
         return super().__str__()
 
-    def ioBlock(self) -> list[str]:
-        return self.inputBlock() + self.outputBlock()
-
     def inputBlock(self) -> list[str]:
         lines: list[str] = []
         lines.append("node [style=\"filled\",fillcolor=\"{}\"]".format(
@@ -40,7 +37,7 @@ class cluster(base):
         lines.extend([utils.matNode(self.prefix,mat,self.materials,self.theme) for mat in self.buffers["output"]])
         return lines
 
-    def intermediary(self) -> list[str]:
+    def children(self) -> list[str]:
         lines: list[str] = []
         lines.append("node [style=\"\"]")
         lines.extend([utils.matNode(self.prefix,mat,self.materials,self.theme) for mat in self.buffers["other"]])
@@ -64,14 +61,14 @@ class cluster(base):
         for (mat,slot) in inputs:
             color = self.theme.get(self.materials.get(mat,"")+"Color","black")
             if mat in buf:
-                lines.append("b_{} -> {}".format(utils.hexHash(self.prefix + mat),slot))
+                lines.append("b_{} -> {} [color={}]".format(utils.hexHash(self.prefix + mat),slot,color))
             else:
                 sources = [p for p in outputs if p[0] == mat]
-                lines.extend(["{} -> {}".format(source[1],slot) for source in sources])
+                lines.extend(["{} -> {} [color={}]".format(source[1],slot,color) for source in sources])
         for (mat,slot) in outputs:
             color = self.theme.get(self.materials.get(mat,"")+"Color","black")
             if mat in buf:
-                lines.append("{1} -> b_{0}".format(utils.hexHash(self.prefix + mat),slot))
+                lines.append("{1} -> b_{0} [color={2}]".format(utils.hexHash(self.prefix + mat),slot,color))
         return lines
 
     def footer(self) -> list[str]:
