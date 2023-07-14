@@ -1,7 +1,7 @@
-from cluster import cluster
-from recipe import base
-from theme import defaultTheme
-import utils
+from converter.cluster import cluster
+from converter.recipe import base
+from converter.theme import defaultTheme
+import converter.utils as utils
 
 class line(cluster):
     def __init__(self,obj:dict,theme=defaultTheme):
