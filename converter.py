@@ -5,20 +5,16 @@ import subprocess
 import converter.utils
 import converter.line
 
-def convert(obj):
-    print(converter.line.line(obj))
+def convert(obj,out = sys.stdout):
+    print(converter.line.line(obj),file=out)
 
 def main():
     name = sys.argv[1]
-    old_stdout = sys.stdout
     with open(name + ".json") as file:
         obj = json.load(file)
         with open(name + ".dot",'w') as out:
-            sys.stdout = out
             immObj = converter.utils.tuplify(obj)
-            convert(immObj)
-            sys.stdout.flush()
-            sys.stdout = old_stdout
+            convert(immObj,out)
 
     subprocess.run(["dot",name + ".dot","-Tpdf","-o",name+".pdf"])
 
