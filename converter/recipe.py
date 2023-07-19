@@ -1,24 +1,25 @@
 from string import Template
+from numbers import Number
 import converter.utils as utils
 
 class base:
     def __init__(self,proc:dict):
         self.machine:str = proc["machine"]
         self.tier:str = proc["tier"]
-        self.duration:str = proc["duration"]
-        self.inputs:tuple = proc["inputs"]
-        self.outputs:tuple = proc["outputs"]
+        self.duration:Number = proc["duration"]
+        self.inputs:dict[str,Number] = proc["inputs"]
+        self.outputs:dict[str,Number] = proc["outputs"]
 
     def __key(self):
-        return (self.machine,self.inputs,self.outputs)
+        return (self.machine,frozenset(self.inputs),frozenset(self.outputs))
     def __hash__(self):
         return hash(self.__key())
     def getInputs(self) -> list[tuple[str,str]]:
         """Returns pairs of material name and corresponding graph node"""
-        return [(req[0],"p_{}:\"{}\"".format(utils.hexHash(self),req[0])) for req in self.inputs]
+        return [(mat,"p_{}:\"{}\"".format(utils.hexHash(self),mat)) for mat in self.inputs.keys()]
     def getOutputs(self)-> list[tuple[str,str]]:
         """Returns pairs of material name and corresponding graph node"""
-        return [(req[0],"p_{}:\"{}\"".format(utils.hexHash(self),req[0])) for req in self.outputs]
+        return [(mat,"p_{}:\"{}\"".format(utils.hexHash(self),mat)) for mat in self.outputs.keys()]
 
     def __str__(self) -> str:
         """Graph element corresponding to recipe"""
@@ -44,7 +45,7 @@ class base:
         lines.append("<TABLE>")
         headRow = Template("<TR><TD>$first</TD><TD>$second</TD></TR>")
         lines.append(headRow.substitute(first=self.machine,second=self.tier))
-        lines.append(headRow.substitute(first="Duration:",second=self.duration + " sec"))
+        lines.append(headRow.substitute(first="Duration:",second=str(self.duration) + " sec"))
         return lines
 
     def children(self) -> list[str]:
@@ -54,13 +55,13 @@ class base:
         lines: list[str] = []
         recRow = Template("<TR><TD PORT=\"$name\">$name</TD><TD>$amount</TD></TR>")
         lines.append("<TR><TD COLSPAN=\"2\">Inputs</TD></TR>")
-        lines.extend([recRow.substitute(name=req[0],amount=req[1]) for req in self.inputs])
+        lines.extend([recRow.substitute(name=mat,amount=count) for (mat,count) in self.inputs.items()])
         return lines
     def outputBlock(self) -> list[str]:
         lines: list[str] = []
         recRow = Template("<TR><TD>$name</TD><TD PORT=\"$name\">$amount</TD></TR>")
         lines.append("<TR><TD COLSPAN=\"2\">Outputs</TD></TR>")
-        lines.extend([recRow.substitute(name=req[0],amount=req[1]) for req in self.outputs])
+        lines.extend([recRow.substitute(name=mat,amount=count) for (mat,count) in self.outputs.items()])
         return lines
 
     def footer(self) -> list[str]:

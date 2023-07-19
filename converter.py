@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import sys
-import json
+import yaml
 import subprocess
 import converter.utils
 import converter.line
@@ -10,8 +10,8 @@ def convert(obj,out = sys.stdout):
 
 def main():
     name = sys.argv[1]
-    with open(name + ".json") as file:
-        obj = json.load(file)
+    with open(name + ".yaml") as file:
+        obj = yaml.safe_load(file)
         with open(name + ".dot",'w') as out:
             immObj = converter.utils.tuplify(obj)
             convert(immObj,out)
