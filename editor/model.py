@@ -11,7 +11,6 @@ class RecipeItem(QStandardItem):
         else:
             super().__init__(recipe.machine)
         self.data:base = recipe
-        self.children:list['RecipeItem'] = []
 
 def modelLine(line: Optional[prodLine]):
     model:QStandardItemModel = QStandardItemModel()

@@ -1,27 +1,22 @@
-from PyQt5.QtWidgets import *
-from editor.model import modelLine
-import json
+import yaml
 import converter.utils
 import converter.line
+import dearpygui.dearpygui as dpg
 
-def readPlatline():
-    with open("platline.json") as file:
-        obj = json.load(file)
-        immObj = converter.utils.tuplify(obj)
-    return converter.line.line(immObj)
+def saveCallback():
+    print("Saved")
 
-app = QApplication([])
-window = QMainWindow()
-fileMenu = window.menuBar().addMenu("File")
-central = QWidget()
-window.setCentralWidget(central)
-layout = QHBoxLayout()
-central.setLayout(layout)
-line = readPlatline()
-model = modelLine(line)
-tree = QTreeView()
-tree.setModel(model)
-tree.header().hide()
-layout.addWidget(tree)
-window.show()
-app.exec()
+dpg.create_context()
+dpg.create_viewport()
+dpg.setup_dearpygui()
+
+with dpg.window(label="Example",tag="Primary window"):
+    dpg.add_text("Hello world")
+    dpg.add_button(label="Save",callback=saveCallback)
+    dpg.add_input_text(label="string")
+    dpg.add_slider_float(label="float")
+
+dpg.show_viewport()
+dpg.set_primary_window("Primary window",True)
+dpg.start_dearpygui()
+dpg.destroy_context()
