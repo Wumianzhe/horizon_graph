@@ -8,6 +8,8 @@ tmp/
 build
 htmlcov
 
+poetry.lock
+
 *.dot
 *.json
 *.yaml

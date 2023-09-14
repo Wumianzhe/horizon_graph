@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "factory-planner"
+version = "0.1.0"
+description = "Calculate and build graphs of production lines"
+authors = ["Kopnov Alexandr <a.kopnov24@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+shortuuid = "^1.0.11"
+
+
+[tool.poetry.group.dev.dependencies]
+debugpy = "^1.8.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
