@@ -1,3 +1,4 @@
+import shortuuid
 from converter.recipe import base
 from converter.theme import defaultTheme
 import converter.utils as utils
@@ -7,19 +8,18 @@ class cluster(base):
         self.buffers:dict[str,tuple[str,...]] = obj["buffers"]
         self.name:str = obj["name"]
         self.prefix:str = prefix + self.name
+        self.tag:str = shortuuid.uuid(self.prefix)
         self.theme:dict[str,str] = theme
         self.materials:dict = materials
         self.recipes:tuple[base,...] = tuple((base(rec) for rec in obj.get("recipes",[])))
         self.subclusters:tuple[cluster,...] = tuple((cluster(cl,materials,theme) for cl in obj.get("clusters",[])))
 
-    def __key(self):
-        return (self.buffers,self.recipes,self.subclusters)
     def __hash__(self):
-        return hash(self.__key())
+        return self.tag
     def getInputs(self) -> list[tuple[str, str]]:
-        return [(mat,"b_{}".format(utils.hexHash(self.prefix + mat))) for mat in self.buffers["input"]]
+        return [(mat,"b_{}".format(shortuuid.uuid(self.prefix+mat))) for mat in self.buffers["input"]]
     def getOutputs(self) -> list[tuple[str, str]]:
-        return [(mat,"b_{}".format(utils.hexHash(self.prefix + mat))) for mat in self.buffers["output"]]
+        return [(mat,"b_{}".format(shortuuid.uuid(self.prefix+mat))) for mat in self.buffers["output"]]
     def __str__(self) -> str:
         return super().__str__()
 
@@ -61,14 +61,14 @@ class cluster(base):
         for (mat,slot) in inputs:
             color = self.theme.get(self.materials.get(mat,"")+"Color","black")
             if mat in buf:
-                lines.append("b_{} -> {} [color={}]".format(utils.hexHash(self.prefix + mat),slot,color))
+                lines.append("b_{} -> {} [color={}]".format(shortuuid.uuid(self.prefix+mat),slot,color))
             else:
                 sources = [p for p in outputs if p[0] == mat]
                 lines.extend(["{} -> {} [color={}]".format(source[1],slot,color) for source in sources])
         for (mat,slot) in outputs:
             color = self.theme.get(self.materials.get(mat,"")+"Color","black")
             if mat in buf:
-                lines.append("{1} -> b_{0} [color={2}]".format(utils.hexHash(self.prefix + mat),slot,color))
+                lines.append("{1} -> b_{0} [color={2}]".format(shortuuid.uuid(self.prefix+mat),slot,color))
         return lines
 
     def footer(self) -> list[str]:

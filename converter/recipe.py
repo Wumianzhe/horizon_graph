@@ -1,25 +1,25 @@
 from string import Template
 from numbers import Number
 import converter.utils as utils
+import shortuuid
 
 class base:
     def __init__(self,proc:dict):
         self.machine:str = proc["machine"]
         self.tier:str = proc["tier"]
+        self.tag:str = shortuuid.uuid()
         self.duration:Number = proc["duration"]
         self.inputs:dict[str,Number] = proc["inputs"]
         self.outputs:dict[str,Number] = proc["outputs"]
 
-    def __key(self):
-        return (self.machine,frozenset(self.inputs),frozenset(self.outputs))
     def __hash__(self):
-        return hash(self.__key())
+        return self.tag
     def getInputs(self) -> list[tuple[str,str]]:
         """Returns pairs of material name and corresponding graph node"""
-        return [(mat,"p_{}:\"{}\"".format(utils.hexHash(self),mat)) for mat in self.inputs.keys()]
+        return [(mat,"p_{}:\"{}\"".format(self.tag,mat)) for mat in self.inputs.keys()]
     def getOutputs(self)-> list[tuple[str,str]]:
         """Returns pairs of material name and corresponding graph node"""
-        return [(mat,"p_{}:\"{}\"".format(utils.hexHash(self),mat)) for mat in self.outputs.keys()]
+        return [(mat,"p_{}:\"{}\"".format(self.tag,mat)) for mat in self.outputs.keys()]
 
     def __str__(self) -> str:
         """Graph element corresponding to recipe"""
@@ -41,7 +41,7 @@ class base:
     def header(self) -> list[str]:
         lines: list[str] = []
         # header
-        lines.append("p_{} [shape=plain,label = <".format(utils.hexHash(self)))
+        lines.append("p_{} [shape=plain,label = <".format(self.tag))
         lines.append("<TABLE>")
         headRow = Template("<TR><TD>$first</TD><TD>$second</TD></TR>")
         lines.append(headRow.substitute(first=self.machine,second=self.tier))

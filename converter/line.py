@@ -7,6 +7,7 @@ class line(cluster):
     def __init__(self,obj:dict,theme=defaultTheme):
         self.buffers:dict[str,tuple[str,...]] = obj["buffers"]
         self.prefix = "gl"
+        self.tag = "top"
         self.theme = theme
         self.materials = self.convertMaterials(obj["materials"])
         self.recipes:tuple[base,...] = tuple((base(rec) for rec in obj.get("recipes",[])))
@@ -16,10 +17,6 @@ class line(cluster):
         convDict = {mat:"solid" for mat in matDict["solids"]}
         convDict.update({mat:"fluid" for mat in matDict["fluids"]})
         return convDict
-    def __key(self):
-        return (self.buffers,self.recipes,self.subclusters)
-    def __hash__(self):
-        return hash(self.__key())
     def inputBlock(self) -> list[str]:
         lines: list[str] = []
         lines.append("subgraph cluster_glIn {")
