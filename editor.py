@@ -9,6 +9,8 @@ dpg.create_context()
 curr_line:Optional[converter.line.line] = None
 fname:str = ""
 
+yaml.emitter.Emitter.prepare_tag = lambda self, tag: ''
+
 def loadWrap(s,a):
     global fname; fname = a["file_path_name"]
     global curr_line; curr_line = loadfromfile(fname)
@@ -37,6 +39,7 @@ with dpg.window(label="Example",tag="Primary window"):
         with dpg.menu(label="Menu"):
             with dpg.file_dialog(label="Open file", width=300, height=400, show=False, callback=loadWrap, tag="fd_open"):
                 dpg.add_file_extension(".yaml", color=(255, 255, 255, 255))
+                dpg.add_file_extension(".temp", color=(255, 0, 255, 255))
 
             dpg.add_menu_item(label="Open",callback=lambda: dpg.show_item("fd_open"))
             dpg.add_menu_item(label="Save",callback=saveCallback)

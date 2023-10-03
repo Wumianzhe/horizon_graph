@@ -15,7 +15,6 @@ def loadfromfile(filename) -> prodLine:
 def gen_widgets(line:prodLine):
     dpg.delete_item("lineRoot",children_only=True) # clear children
     for c in line.subclusters:
-        print(c.name)
         if c.subclusters:
             dpg.add_collapsing_header(parent="lineRoot",label=c.name)
         else:
