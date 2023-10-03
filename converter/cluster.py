@@ -11,8 +11,8 @@ class cluster(base):
         self.tag:str = shortuuid.uuid(self.prefix)
         self.theme:dict[str,str] = theme
         self.materials:dict = materials
-        self.recipes:tuple[base,...] = tuple((base(rec) for rec in obj.get("recipes",[])))
-        self.subclusters:tuple[cluster,...] = tuple((cluster(cl,materials,theme) for cl in obj.get("clusters",[])))
+        self.recipes:list[base] = [base(rec) for rec in obj.get("recipes",[])]
+        self.subclusters:list[cluster] = [cluster(cl,materials,theme) for cl in obj.get("clusters",[])]
 
     def __hash__(self):
         return self.tag

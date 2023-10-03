@@ -5,14 +5,12 @@ from converter.utils import tuplify
 import dearpygui.dearpygui as dpg
 import yaml
 
-def loadfromfile(_,app_data):
-    name = app_data["file_path_name"]
-    with open(name) as file:
+def loadfromfile(filename) -> prodLine:
+    with open(filename) as file:
         obj = yaml.safe_load(file)
-        immobj = tuplify(obj)
-        assert(isinstance(immobj,dict))
-        line = prodLine(immobj)
+        line = prodLine(obj)
         gen_widgets(line)
+        return line
 
 def gen_widgets(line:prodLine):
     dpg.delete_item("lineRoot",children_only=True) # clear children
