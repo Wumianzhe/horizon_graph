@@ -1,0 +1,370 @@
+buffers:
+  input:
+  - H
+  - O
+  - Water
+  - PtMP
+  - Saltpeter
+  - KS2
+  - Salt water
+  other: []
+  output:
+  - Pt
+  - Pd
+  - Ir
+  - Os
+  - Ru
+clusters:
+- buffers:
+    input:
+    - PtMP
+    - O
+    - Water
+    - Ca
+    other: []
+    output:
+    - Pt
+    - PlatRes
+    - PdAm
+    - CaCl
+  name: plat main
+  recipes:
+  - duration: 1.5
+    inputs:
+      Nitric: 1000
+      Dil. Sulfuric: 1000
+    machine: Mixer
+    outputs:
+      AqReg: 2000
+    tier: LV
+  - duration: 16
+    inputs:
+      NO2: 2000
+      O: 1000
+      Water: 1000
+    machine: Large Ch.re.
+    outputs:
+      Nitric: 2000
+    tier: LV
+  - duration: 12.5
+    inputs:
+      PtMP: 1
+      AqReg: 1000
+    machine: Ch. re.
+    outputs:
+      PlatRes: 0.11
+      PlC: 1000
+    tier: LV
+  - duration: 70
+    inputs:
+      PlC: 18000
+      AmCl: 3600
+    machine: Large Ch. re.
+    outputs:
+      PlatSalt: 16
+      RePt: 4
+      PdAm: 3600
+      NO2: 9000
+      Dil. Sulfuric: 9000
+    tier: HV
+  - duration: 30
+    inputs:
+      PlatSalt: 1
+    machine: Sifter
+    outputs:
+      RPS: 0.9
+    tier: LV
+  - duration: 10
+    inputs:
+      RPS: 1
+    machine: EBF
+    outputs:
+      PtMP: 1
+      Chlorine: 87
+    tier: MV
+  - duration: 1.5
+    inputs:
+      RePt: 4
+      Ca: 1
+    machine: Ch. re
+    outputs:
+      Pt: 2
+      CaCl: 3
+    tier: LV
+- buffers:
+    input:
+    - PdAm
+    - Ammonia
+    - Formic
+    other:
+    - PdMP
+    output:
+    - Pd
+  name: palladium
+  recipes:
+  - duration: 112.5
+    inputs:
+      PdMP: 9
+      PdAm: 9000
+    machine: Ch. re
+    outputs:
+      PdSalt: 16
+      RePd: 2
+    tier: LV
+  - duration: 30
+    inputs:
+      PdSalt: 1
+    machine: Sifter
+    outputs:
+      PdMP: 0.95
+    tier: LV
+  - duration: 12.5
+    inputs:
+      RePd: 4
+      Formic: 4000
+    machine: Large Ch. re
+    outputs:
+      Pd: 2
+      Ammonia: 4000
+      Ethylene: 1000
+      Water: 1000
+    tier: LV
+  - duration: 12.5
+    inputs:
+      PdMP: 1
+      Ammonia: 1000
+    machine: Ch. re
+    outputs:
+      PdAm: 1000
+    tier: LV
+- buffers:
+    input:
+    - PlatRes
+    - Saltpeter
+    - Salt water
+    - KS2
+    - HCl
+    other: []
+    output:
+    - NaRuO
+    - AcOs
+    - IMR
+    - RdS
+  name: Residues
+  recipes:
+  - duration: 10
+    inputs:
+      PlatRes: 1
+      KS2: 360
+    machine: EBF
+    outputs:
+      RdS: 360
+      LeachRes: 1
+    tier: MV
+  - duration: 10
+    inputs:
+      LeachRes: 10
+      Saltpeter: 10
+      Salt water: 1000
+    machine: EBF
+    outputs:
+      NaRuO: 3
+      Rare res: 6
+      Steam: 1000
+    tier: MV
+  - duration: 5
+    inputs:
+      Rare res: 2
+      HCl: 500
+    machine: EBF
+    outputs:
+      IMR: 1
+      AcOs: 1000
+    tier: MV
+- buffers:
+    input:
+    - AcOs
+    - HCl
+    other: []
+    output:
+    - Os
+    - Chlorine
+  name: Osmium
+  recipes:
+  - duration: 7.5
+    inputs:
+      AcOs: 1000
+    machine: Distill
+    outputs:
+      OsSol: 100
+      Water: 900
+    tier: IV
+  - duration: 15
+    inputs:
+      OsSol: 1000
+      HCl: 6000
+    machine: Ch. re.
+    outputs:
+      Os: 1
+      Chlorine: 7000
+      Water: 2000
+    tier: LV
+- buffers:
+    input:
+    - IMR
+    - AmCl
+    - Ca
+    - HCl
+    other: []
+    output:
+    - Ir
+    - Ammonia
+    - CaCl
+  name: Iridium
+  recipes:
+  - duration: 10
+    inputs:
+      IMR: 1
+    machine: EBF
+    outputs:
+      Sludge dust: 1
+      IrO: 1
+    tier: MV
+  - duration: 15
+    inputs:
+      IrO: 1
+      HCl: 1000
+    machine: Ch. re.
+    outputs:
+      IrSol: 1000
+    tier: LV
+  - duration: 15
+    inputs:
+      IrSol: 1000
+      AmCl: 3000
+    machine: Ch. re.
+    outputs:
+      IrCl: 1
+      Ammonia: 3000
+    tier: LV
+  - duration: 15
+    inputs:
+      IrCl: 1
+      Ca: 1
+    machine: Ch. re.
+    outputs:
+      Ir: 1
+      CaCl: 3000
+      MetSludge: 1
+    tier: EV
+- buffers:
+    input:
+    - NaRuO
+    - Steam
+    - HCl
+    other: []
+    output:
+    - Ru
+    - Chlorine
+  name: Rutenium
+  recipes:
+  - duration: 15
+    inputs:
+      NaRuO: 1
+      Chlorine: 3000
+    machine: Ch. re.
+    outputs:
+      RuTetSol: 3000
+    tier: LV
+  - duration: 7.5
+    inputs:
+      RuTetSol: 1000
+      Steam: 1000
+    machine: Oil Cracker
+    outputs:
+      Hot RuTetSol: 2000
+    tier: HV
+  - duration: 75
+    inputs:
+      Hot RuTetSol: 9000
+      Steam: 1000
+    machine: Distill
+    outputs:
+      RuO4: 7200
+      Salt: 6
+      Water: 1800
+    tier: HV
+  - duration: 1.65
+    inputs:
+      RuO4: 1000
+    machine: Solidifier
+    outputs:
+      RuTet: 1
+    tier: LV
+  - duration: 15
+    inputs:
+      RuTet: 1
+      HCl: 6000
+    machine: Ch. re.
+    outputs:
+      Ru: 1
+      Chlorine: 6000
+      Water: 2000
+    tier: LV
+- buffers:
+    input:
+    - CaCl
+    - Chlorine
+    - Ammonia
+    - H
+    other: []
+    output:
+    - HCl
+    - Ca
+    - AmCl
+  name: Acid trip
+  recipes:
+  - duration: 1.35
+    inputs:
+      CaCl: 3
+    machine: Electrolyzer
+    outputs:
+      Ca: 1
+      Chlorine: 2000
+    tier: MV
+  - duration: 3
+    inputs:
+      H: 1000
+      Chlorine: 1000
+    machine: Chem. reactor
+    outputs:
+      HCl: 1000
+    tier: ULV
+  - duration: 0.75
+    inputs:
+      Ammonia: 1000
+      HCl: 1000
+    machine: Ch. re.
+    outputs:
+      AmCl: 1000
+    tier: LV
+materials:
+  fluids:
+  - Dil. Sulfuric
+  - Nitric
+  - Ammonia
+  - HCl
+  - PdAm
+  - KS2
+  - Salt water
+  - Chlorine
+  solids:
+  - PtMP
+  - Pt
+  - PdMP
+  - Pd
+  - PlatRes
+  - Saltpeter
+  - Os
+  - Ir
+  - Ru

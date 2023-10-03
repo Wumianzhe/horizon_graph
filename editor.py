@@ -15,7 +15,7 @@ def loadWrap(s,a):
 
 def saveCallback():
     if fname:
-        with open(fname,"w") as file:
+        with open(fname+".temp","w") as file:
             yaml.dump(curr_line,file)
     else:
         saveAsCallback()
