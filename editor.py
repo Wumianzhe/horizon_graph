@@ -17,7 +17,7 @@ def loadWrap(s,a):
 
 def saveCallback():
     if fname:
-        with open(fname+".temp","w") as file:
+        with open(fname,"w") as file:
             yaml.dump(curr_line,file)
     else:
         saveAsCallback()
@@ -37,9 +37,9 @@ dpg.setup_dearpygui()
 with dpg.window(label="Example",tag="Primary window"):
     with dpg.menu_bar():
         with dpg.menu(label="Menu"):
-            with dpg.file_dialog(label="Open file", width=300, height=400, show=False, callback=loadWrap, tag="fd_open"):
-                dpg.add_file_extension(".yaml", color=(255, 255, 255, 255))
-                dpg.add_file_extension(".temp", color=(255, 0, 255, 255))
+            with dpg.file_dialog(label="Open file", width=600, height=400, show=False, callback=loadWrap, tag="fd_open"):
+                dpg.add_file_extension(".yaml", color=(0, 255, 255, 255))
+                dpg.add_file_extension(".temp", color=(0, 255, 255, 255))
 
             dpg.add_menu_item(label="Open",callback=lambda: dpg.show_item("fd_open"))
             dpg.add_menu_item(label="Save",callback=saveCallback)

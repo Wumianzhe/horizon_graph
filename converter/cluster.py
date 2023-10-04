@@ -12,7 +12,7 @@ class cluster(base):
         self.theme:dict[str,str] = theme
         self.materials:dict = materials
         self.recipes:list[base] = [base(rec) for rec in obj.get("recipes",[])]
-        self.subclusters:list[cluster] = [cluster(cl,materials,theme) for cl in obj.get("clusters",[])]
+        self.clusters:list[cluster] = [cluster(cl,materials,theme) for cl in obj.get("clusters",[])]
 
     def __hash__(self):
         return self.tag
@@ -43,7 +43,7 @@ class cluster(base):
         lines.extend([utils.matNode(self.prefix,mat,self.materials,self.theme) for mat in self.buffers["other"]])
 
         lines.extend([str(rec) for rec in self.recipes])
-        lines.extend([str(cl) for cl in self.subclusters])
+        lines.extend([str(cl) for cl in self.clusters])
         return lines
 
     def header(self) -> list[str]:
@@ -54,7 +54,7 @@ class cluster(base):
 
     def linking(self) -> list[str]:
         lines: list[str] = []
-        recList:tuple[base,...] = self.recipes + self.subclusters
+        recList:tuple[base,...] = self.recipes + self.clusters
         buf: tuple[str,...] = self.buffers["input"] + self.buffers["output"] + self.buffers["other"]
         inputs = [inList for rec in recList for inList in rec.getInputs()]
         outputs = [outList for rec in recList for outList in rec.getOutputs()]

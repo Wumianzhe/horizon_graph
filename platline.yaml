@@ -27,15 +27,38 @@ clusters:
     - PlatRes
     - PdAm
     - CaCl
+  clusters: []
+  materials: &id001
+    fluids:
+    - Dil. Sulfuric
+    - Nitric
+    - Ammonia
+    - HCl
+    - PdAm
+    - KS2
+    - Salt water
+    - Chlorine
+    solids:
+    - PtMP
+    - Pt
+    - PdMP
+    - Pd
+    - PlatRes
+    - Saltpeter
+    - Os
+    - Ir
+    - Ru
   name: plat main
+  prefix: plat main
   recipes:
   - duration: 1.5
     inputs:
-      Nitric: 1000
       Dil. Sulfuric: 1000
+      Nitric: 1000
     machine: Mixer
     outputs:
       AqReg: 2000
+    tag: 8ojVS4hHds3UFx4Pgg7YCX
     tier: LV
   - duration: 16
     inputs:
@@ -45,27 +68,30 @@ clusters:
     machine: Large Ch.re.
     outputs:
       Nitric: 2000
+    tag: UkAzM2iu7N8BtMnZPFHb4T
     tier: LV
   - duration: 12.5
     inputs:
-      PtMP: 1
       AqReg: 1000
+      PtMP: 1
     machine: Ch. re.
     outputs:
-      PlatRes: 0.11
       PlC: 1000
+      PlatRes: 0.11
+    tag: jCjcAUvLGFLfBUo68U6ZVN
     tier: LV
   - duration: 70
     inputs:
-      PlC: 18000
       AmCl: 3600
+      PlC: 18000
     machine: Large Ch. re.
     outputs:
+      Dil. Sulfuric: 9000
+      NO2: 9000
+      PdAm: 3600
       PlatSalt: 16
       RePt: 4
-      PdAm: 3600
-      NO2: 9000
-      Dil. Sulfuric: 9000
+    tag: arQmUCZ4tbvmcZTpPkutFT
     tier: HV
   - duration: 30
     inputs:
@@ -73,24 +99,37 @@ clusters:
     machine: Sifter
     outputs:
       RPS: 0.9
+    tag: LQQVU3rB3YzLcbo7dcu9UP
     tier: LV
   - duration: 10
     inputs:
       RPS: 1
     machine: EBF
     outputs:
-      PtMP: 1
       Chlorine: 87
+      PtMP: 1
+    tag: GrkofRCWZBoKvigQQjh95P
     tier: MV
   - duration: 1.5
     inputs:
-      RePt: 4
       Ca: 1
+      RePt: 4
     machine: Ch. re
     outputs:
-      Pt: 2
       CaCl: 3
+      Pt: 2
+    tag: 3s6wjn8LtWbZfmVFgcNFnx
     tier: LV
+  tag: BBBhxoTq8TBCF7PF6Pjfb4
+  theme: &id002
+    fluidColor: darkorchid
+    fluidShape: ellipse
+    globalIColor: teal
+    globalOColor: gold
+    inputColor: deepskyblue
+    outputColor: orange
+    solidColor: firebrick
+    solidShape: box
 - buffers:
     input:
     - PdAm
@@ -100,16 +139,20 @@ clusters:
     - PdMP
     output:
     - Pd
+  clusters: []
+  materials: *id001
   name: palladium
+  prefix: palladium
   recipes:
   - duration: 112.5
     inputs:
-      PdMP: 9
       PdAm: 9000
+      PdMP: 9
     machine: Ch. re
     outputs:
       PdSalt: 16
       RePd: 2
+    tag: boz5TWUpgqqmAB56VZyBpf
     tier: LV
   - duration: 30
     inputs:
@@ -117,26 +160,31 @@ clusters:
     machine: Sifter
     outputs:
       PdMP: 0.95
+    tag: n8sgixYKGuesMBia8nUagt
     tier: LV
   - duration: 12.5
     inputs:
-      RePd: 4
       Formic: 4000
+      RePd: 4
     machine: Large Ch. re
     outputs:
-      Pd: 2
       Ammonia: 4000
       Ethylene: 1000
+      Pd: 2
       Water: 1000
+    tag: K9FSYxMTPwvv9xtqNw8mMb
     tier: LV
   - duration: 12.5
     inputs:
-      PdMP: 1
       Ammonia: 1000
+      PdMP: 1
     machine: Ch. re
     outputs:
       PdAm: 1000
+    tag: 56sGC6zFgRnubrQJTRLUMV
     tier: LV
+  tag: NWxfT99c9ugmGGRsNfNzPe
+  theme: *id002
 - buffers:
     input:
     - PlatRes
@@ -150,37 +198,45 @@ clusters:
     - AcOs
     - IMR
     - RdS
+  clusters: []
+  materials: *id001
   name: Residues
+  prefix: Residues
   recipes:
   - duration: 10
     inputs:
-      PlatRes: 1
       KS2: 360
+      PlatRes: 1
     machine: EBF
     outputs:
-      RdS: 360
       LeachRes: 1
+      RdS: 360
+    tag: Y8riivh39jFSUSeAJbjvri
     tier: MV
   - duration: 10
     inputs:
       LeachRes: 10
-      Saltpeter: 10
       Salt water: 1000
+      Saltpeter: 10
     machine: EBF
     outputs:
       NaRuO: 3
       Rare res: 6
       Steam: 1000
+    tag: C4v4evhSSJUUZwe34iuZNp
     tier: MV
   - duration: 5
     inputs:
-      Rare res: 2
       HCl: 500
+      Rare res: 2
     machine: EBF
     outputs:
-      IMR: 1
       AcOs: 1000
+      IMR: 1
+    tag: CzhFs4VrrWTQ8MiHen2GVu
     tier: MV
+  tag: k5rp83CHsGKvbU42CXLnW7
+  theme: *id002
 - buffers:
     input:
     - AcOs
@@ -189,7 +245,10 @@ clusters:
     output:
     - Os
     - Chlorine
+  clusters: []
+  materials: *id001
   name: Osmium
+  prefix: Osmium
   recipes:
   - duration: 7.5
     inputs:
@@ -198,17 +257,21 @@ clusters:
     outputs:
       OsSol: 100
       Water: 900
+    tag: e6U3riJM2EbfX4JGzTbv3f
     tier: IV
   - duration: 15
     inputs:
-      OsSol: 1000
       HCl: 6000
+      OsSol: 1000
     machine: Ch. re.
     outputs:
-      Os: 1
       Chlorine: 7000
+      Os: 1
       Water: 2000
+    tag: DdFihDPTv3RaYaHa6eHkQQ
     tier: LV
+  tag: moHJRuxyDM2vJedXXY9kgR
+  theme: *id002
 - buffers:
     input:
     - IMR
@@ -220,43 +283,52 @@ clusters:
     - Ir
     - Ammonia
     - CaCl
+  clusters: []
+  materials: *id001
   name: Iridium
+  prefix: Iridium
   recipes:
   - duration: 10
     inputs:
       IMR: 1
     machine: EBF
     outputs:
-      Sludge dust: 1
       IrO: 1
+      Sludge dust: 1
+    tag: Gm5AjsrxnJp5Nxx5aVxnpd
     tier: MV
   - duration: 15
     inputs:
-      IrO: 1
       HCl: 1000
+      IrO: 1
     machine: Ch. re.
     outputs:
       IrSol: 1000
+    tag: KdEfqNWQM9Psg7w363pXvk
     tier: LV
   - duration: 15
     inputs:
-      IrSol: 1000
       AmCl: 3000
+      IrSol: 1000
     machine: Ch. re.
     outputs:
-      IrCl: 1
       Ammonia: 3000
+      IrCl: 1
+    tag: Zz783xXsTw9YdpNr7H53yS
     tier: LV
   - duration: 15
     inputs:
-      IrCl: 1
       Ca: 1
+      IrCl: 1
     machine: Ch. re.
     outputs:
-      Ir: 1
       CaCl: 3000
+      Ir: 1
       MetSludge: 1
+    tag: mfNK3s5QJoyEQj8bj5g5wK
     tier: EV
+  tag: 52Qjdm3QxLwjS7pNx5mjwL
+  theme: *id002
 - buffers:
     input:
     - NaRuO
@@ -266,15 +338,19 @@ clusters:
     output:
     - Ru
     - Chlorine
+  clusters: []
+  materials: *id001
   name: Rutenium
+  prefix: Rutenium
   recipes:
   - duration: 15
     inputs:
-      NaRuO: 1
       Chlorine: 3000
+      NaRuO: 1
     machine: Ch. re.
     outputs:
       RuTetSol: 3000
+    tag: WVs9xBPrvj88TsGSzcKPsf
     tier: LV
   - duration: 7.5
     inputs:
@@ -283,6 +359,7 @@ clusters:
     machine: Oil Cracker
     outputs:
       Hot RuTetSol: 2000
+    tag: g8rWpqjmX7TCZF4zoNjbMr
     tier: HV
   - duration: 75
     inputs:
@@ -293,6 +370,7 @@ clusters:
       RuO4: 7200
       Salt: 6
       Water: 1800
+    tag: JRVv9hCaprwyorFPP97LJL
     tier: HV
   - duration: 1.65
     inputs:
@@ -300,17 +378,21 @@ clusters:
     machine: Solidifier
     outputs:
       RuTet: 1
+    tag: RD2GrdPfhcUqbMwjbUTnCC
     tier: LV
   - duration: 15
     inputs:
-      RuTet: 1
       HCl: 6000
+      RuTet: 1
     machine: Ch. re.
     outputs:
-      Ru: 1
       Chlorine: 6000
+      Ru: 1
       Water: 2000
+    tag: Dn2mgcTjLkjBmERY4Sp2nh
     tier: LV
+  tag: REbvpuz5P9LYG6Wrs7rLKw
+  theme: *id002
 - buffers:
     input:
     - CaCl
@@ -322,7 +404,10 @@ clusters:
     - HCl
     - Ca
     - AmCl
+  clusters: []
+  materials: *id001
   name: Acid trip
+  prefix: Acid trip
   recipes:
   - duration: 1.35
     inputs:
@@ -331,14 +416,16 @@ clusters:
     outputs:
       Ca: 1
       Chlorine: 2000
+    tag: WboAhYSWXXB4VZpvdJebgi
     tier: MV
   - duration: 3
     inputs:
-      H: 1000
       Chlorine: 1000
+      H: 1000
     machine: Chem. reactor
     outputs:
       HCl: 1000
+    tag: Dqb6oyb6QYHgahaLjzrYie
     tier: ULV
   - duration: 0.75
     inputs:
@@ -347,24 +434,12 @@ clusters:
     machine: Ch. re.
     outputs:
       AmCl: 1000
+    tag: KVJJme2f8axTWouF848jCP
     tier: LV
-materials:
-  fluids:
-  - Dil. Sulfuric
-  - Nitric
-  - Ammonia
-  - HCl
-  - PdAm
-  - KS2
-  - Salt water
-  - Chlorine
-  solids:
-  - PtMP
-  - Pt
-  - PdMP
-  - Pd
-  - PlatRes
-  - Saltpeter
-  - Os
-  - Ir
-  - Ru
+  tag: aDXzTXworeYYgtGBL4dnD8
+  theme: *id002
+materials: *id001
+prefix: gl
+recipes: []
+tag: top
+theme: *id002

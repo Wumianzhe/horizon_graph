@@ -9,14 +9,10 @@ class line(cluster):
         self.prefix = "gl"
         self.tag = "top"
         self.theme = theme
-        self.materials = self.convertMaterials(obj["materials"])
-        self.recipes:tuple[base,...] = tuple((base(rec) for rec in obj.get("recipes",[])))
-        self.subclusters:tuple[cluster,...] = tuple((cluster(cl,self.materials,theme) for cl in obj.get("clusters",[])))
+        self.materials = obj["materials"]
+        self.recipes:list[base] = [base(rec) for rec in obj.get("recipes",[])]
+        self.clusters:list[cluster] = [cluster(cl,self.materials,theme) for cl in obj.get("clusters",[])]
 
-    def convertMaterials(self,matDict):
-        convDict = {mat:"solid" for mat in matDict["solids"]}
-        convDict.update({mat:"fluid" for mat in matDict["fluids"]})
-        return convDict
     def inputBlock(self) -> list[str]:
         lines: list[str] = []
         lines.append("subgraph cluster_glIn {")
