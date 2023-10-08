@@ -24,11 +24,11 @@ def init_widgets(line:prodLine):
     populate_table(line,"lineRoot")
 
 def create_table(item: int|str):
-    with dpg.table(header_row=True,parent=item):
+    with dpg.table(header_row=True,parent=item,user_data=0) as ioTable:
         dpg.add_table_column(label="Inputs")
         dpg.add_table_column(label="Outputs")
-    dpg.add_button(parent=item,label="Add input")
-    dpg.add_button(parent=item,label="Add output")
+    dpg.add_button(parent=item,label="Add input",callback=lambda: print(dpg.get_item_user_data(ioTable)))
+    dpg.add_button(parent=item,label="Add output",callback=lambda: print(dpg.get_item_user_data(ioTable)))
     with dpg.table(header_row=True,parent=item):
         dpg.add_table_column(label="Machine")
         dpg.add_table_column(label="Tier",width_fixed=True)
@@ -46,8 +46,10 @@ def populate_table(cl:cluster,item: int|str):
     items = items[1]
     ioTable = items[0]
 
+    diff = len(cl.buffers["input"]) - len(cl.buffers["output"])
+    dpg.set_item_user_data(ioTable,diff)
     for (i,o) in zip_longest(cl.buffers["input"],cl.buffers["output"]):
-        with dpg.table_row(parent=items[0]):
+        with dpg.table_row(parent=ioTable):
             if i:
                 dpg.add_text(i)
             if o:
