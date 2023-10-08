@@ -9,14 +9,14 @@ def loadfromfile(filename) -> prodLine:
     with open(filename) as file:
         obj = yaml.safe_load(file)
         line = prodLine(obj)
-        gen_widgets(line)
         return line
 
-def gen_widgets(line:prodLine):
-    dpg.delete_item("lineRoot",children_only=True) # clear children
-    for c in line.clusters:
-        if c.clusters:
-            dpg.add_collapsing_header(parent="lineRoot",label=c.name)
-        else:
-            dpg.add_tree_node(parent="lineRoot",label=c.name)
-    pass
+def saveCallback(fname,line):
+    if fname:
+        with open(fname,"w") as file:
+            yaml.dump(line,file)
+    else:
+        saveAsCallback()
+
+def saveAsCallback():
+    print("Not done yet")

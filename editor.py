@@ -1,30 +1,57 @@
 from typing import Optional
 import yaml
 import converter.utils
-import converter.line
+from converter.line import line  as prodLine
+from converter.cluster import cluster
+from itertools import zip_longest
 import dearpygui.dearpygui as dpg
-from editor.loadFile import loadfromfile
+from editor.fileIO import loadfromfile,saveAsCallback,saveCallback
 
 dpg.create_context()
-curr_line:Optional[converter.line.line] = None
+curr_line = prodLine({})
 fname:str = ""
 
 yaml.emitter.Emitter.prepare_tag = lambda self, tag: ''
 
-def loadWrap(s,a):
+def loadWrap(sender,a):
     global fname; fname = a["file_path_name"]
     global curr_line; curr_line = loadfromfile(fname)
+    init_widgets(curr_line)
 
-def saveCallback():
-    if fname:
-        with open(fname,"w") as file:
-            yaml.dump(curr_line,file)
-    else:
-        saveAsCallback()
+def init_widgets(line:prodLine):
+    dpg.delete_item("lineRoot",children_only=True) # clear children
+    create_table("lineRoot")
+    populate_table(line,"lineRoot")
 
-def saveAsCallback():
-    print("Not done yet")
+def create_table(item: int|str):
+    with dpg.table(header_row=True,parent=item):
+        dpg.add_table_column(label="Inputs")
+        dpg.add_table_column(label="Outputs")
+    dpg.add_button(parent=item,label="Add input")
+    dpg.add_button(parent=item,label="Add output")
+    with dpg.table(header_row=True,parent=item):
+        dpg.add_table_column(label="Machine")
+        dpg.add_table_column(label="Tier",width_fixed=True)
+        dpg.add_table_column(label="Recipe tier",width_fixed=True)
+        dpg.add_table_column(label="Duration")
+        dpg.add_table_column(label="Inputs")
+        dpg.add_table_column(label="Outputs")
+        dpg.add_table_column(label="Count")
+    with dpg.tree_node(parent=item,label="Subfactories",indent=5):
+        pass
 
+def populate_table(cl:cluster,item: int|str):
+    items = dpg.get_item_children(item)
+    assert(isinstance(items, dict))
+    items = items[1]
+    ioTable = items[0]
+
+    for (i,o) in zip_longest(cl.buffers["input"],cl.buffers["output"]):
+        with dpg.table_row(parent=items[0]):
+            if i:
+                dpg.add_text(i)
+            if o:
+                dpg.add_text(o)
 
 with dpg.theme() as borderless_child_theme:
     with dpg.theme_component(dpg.mvChildWindow):
@@ -33,34 +60,18 @@ with dpg.theme() as borderless_child_theme:
 dpg.create_viewport()
 dpg.setup_dearpygui()
 
-
 with dpg.window(label="Example",tag="Primary window"):
     with dpg.menu_bar():
         with dpg.menu(label="Menu"):
             with dpg.file_dialog(label="Open file", width=600, height=400, show=False, callback=loadWrap, tag="fd_open"):
                 dpg.add_file_extension(".yaml", color=(0, 255, 255, 255))
-                dpg.add_file_extension(".temp", color=(0, 255, 255, 255))
 
             dpg.add_menu_item(label="Open",callback=lambda: dpg.show_item("fd_open"))
-            dpg.add_menu_item(label="Save",callback=saveCallback)
+            dpg.add_menu_item(label="Save",callback=lambda: saveCallback(fname,curr_line))
             dpg.add_menu_item(label="Save As",callback=saveAsCallback)
     with dpg.group(horizontal=True):
-        with dpg.child_window(width=200) as treeWindow:
-            dpg.bind_item_theme(treeWindow,borderless_child_theme)
-            dpg.add_collapsing_header(label="Production line",tag="lineRoot")
-        with dpg.group():
-            with dpg.table(header_row=True,tag="IOTable"):
-                dpg.add_table_column(label="Inputs")
-                dpg.add_table_column(label="Outputs")
-            dpg.add_collapsing_header(label="Subfactories",tag="subclusters")
-            with dpg.table(header_row=True,tag="RecipeTable"):
-                dpg.add_table_column(label="Machine")
-                dpg.add_table_column(label="Tier",width_fixed=True)
-                dpg.add_table_column(label="Recipe tier",width_fixed=True)
-                dpg.add_table_column(label="Duration")
-                dpg.add_table_column(label="Inputs")
-                dpg.add_table_column(label="Outputs")
-                dpg.add_table_column(label="Count")
+        dpg.add_collapsing_header(label="Production line",tag="lineRoot",default_open=True)
+    create_table("lineRoot")
 
 dpg.show_viewport()
 dpg.set_primary_window("Primary window",True)

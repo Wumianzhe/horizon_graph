@@ -5,11 +5,11 @@ import converter.utils as utils
 
 class line(cluster):
     def __init__(self,obj:dict,theme=defaultTheme):
-        self.buffers:dict[str,tuple[str,...]] = obj["buffers"]
+        self.buffers:dict[str,tuple[str,...]] = obj.get("buffers",{})
         self.prefix = "gl"
         self.tag = "top"
         self.theme = theme
-        self.materials = obj["materials"]
+        self.materials = obj.get("materials",{})
         self.recipes:list[base] = [base(rec) for rec in obj.get("recipes",[])]
         self.clusters:list[cluster] = [cluster(cl,self.materials,theme) for cl in obj.get("clusters",[])]
 
