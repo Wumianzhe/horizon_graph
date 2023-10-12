@@ -1,8 +1,6 @@
 from typing import Optional
 import yaml
 from converter.line import line  as prodLine
-from converter.cluster import cluster
-from itertools import zip_longest
 import dearpygui.dearpygui as dpg
 import editor.utils as utils
 from editor.fileIO import loadfromfile,saveAsCallback,saveCallback

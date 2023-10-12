@@ -1,13 +1,15 @@
 from string import Template
 from numbers import Number
 from typing import Optional
+from converter.enums import VoltageTier
 import converter.utils as utils
 import shortuuid
 
 class base:
     def __init__(self,proc:dict):
         self.machine:str = proc["machine"]
-        self.tier:str = proc["tier"]
+        self.tier:VoltageTier = proc.get("tier",VoltageTier.LV)
+        self.mtier:VoltageTier = proc.get("mtier",self.tier)
         self.tag:str = proc.get("tag",shortuuid.uuid())
         self.duration:Number = proc["duration"]
         self.inputs:dict[str,Number] = proc["inputs"]
