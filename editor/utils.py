@@ -1,10 +1,10 @@
-from collections import defaultdict
 from typing import Any
 from converter.cluster import cluster
 from itertools import zip_longest
 import dearpygui.dearpygui as dpg
 
-from converter.enums import VoltageTier
+from converter.recipe import base
+from editor.recipe import recipe
 
 def unwrap(val: Any|None,default):
     return val if val is not None else default
@@ -73,11 +73,8 @@ def createTable(parent: int|str):
     with dpg.collapsing_header(parent=parent,label="Subfactories",indent=5):
         pass
 
-def _saveRec(s,a,u):
-    modal, cells = u
-    print("Save")
-    dpg.configure_item(modal,show=False)
-    print(cells)
+def _getIOMats(table):
+    pass
 
 def populateTable(cl:cluster,parent: int|str):
     items = dpg.get_item_children(parent,slot=1)
@@ -100,36 +97,9 @@ def populateTable(cl:cluster,parent: int|str):
     assert(isinstance(recHeader,list))
     recTable = recHeader[0]
     for rec in cl.recipes:
-        with dpg.table_row(parent=recTable):
-            cells = [dpg.add_table_cell() for i in range(7)]
-            rec_static = []
-            rec_static.append(dpg.add_text(parent =cells[0], default_value =rec.machine))
-            rec_static.append(dpg.add_text(parent =cells[1], default_value =rec.mtier))
-            rec_static.append(dpg.add_text(parent =cells[2], default_value =rec.tier))
-            rec_static.append(dpg.add_text(parent =cells[3], default_value =str(rec.duration)))
-            rec_static.append(dpg.add_text(parent =cells[4], default_value =str(next(iter(rec.outputs.items())))))
-            dpg.add_text(parent =cells[5], default_value ="1")
-            b_Edit = dpg.add_button(parent=cells[6],label = "Edit")
-
-            with dpg.popup(b_Edit,dpg.mvMouseButton_Left,True) as modal:
-                with dpg.table(header_row=False,width=250):
-                    dpg.add_table_column(width=150)
-                    dpg.add_table_column(width=100)
-                    with dpg.table_row():
-                        dpg.add_text(default_value="Machine")
-                        dpg.add_input_text(default_value=dpg.get_value(rec_static[0]))
-                    with dpg.table_row():
-                        dpg.add_text(default_value="Machine voltage")
-                        dpg.add_combo(VoltageTier._member_names_,default_value=dpg.get_value(rec_static[1]))
-                    with dpg.table_row():
-                        dpg.add_text(default_value="Recipe voltabe")
-                        dpg.add_combo(VoltageTier._member_names_,default_value=dpg.get_value(rec_static[2]))
-                    with dpg.table_row():
-                        dpg.add_text(default_value="Duration")
-                        dpg.add_input_text(default_value=dpg.get_value(rec_static[3]))
-                with dpg.group(horizontal=True):
-                    dpg.add_button(label="Save",width=75,callback=_saveRec,user_data=(modal,rec_static))
-                    dpg.add_button(label="Cancel",width=75,callback=lambda s,a,u: dpg.configure_item(u,show=False),user_data=modal)
+        r = recipe(rec)
+        with dpg.table_row(parent=recTable) as row:
+            r.recRow(row)
 
     subHeader = items[2]
     for c in cl.clusters:
