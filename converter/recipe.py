@@ -1,5 +1,4 @@
 from string import Template
-from numbers import Number
 from converter.enums import VoltageTier
 import shortuuid
 
@@ -10,8 +9,8 @@ class base:
         self.mtier:VoltageTier = proc.get("mtier",self.tier)
         self.tag:str = proc.get("tag",shortuuid.uuid())
         self.duration:int|float = proc.get("duration",1)
-        self.inputs:dict[str,Number] = proc.get("inputs",{})
-        self.outputs:dict[str,Number] = proc.get("outputs",{})
+        self.inputs:dict[str,int|float] = proc.get("inputs",{})
+        self.outputs:dict[str,int|float] = proc.get("outputs",{})
 
     def __hash__(self):
         return self.tag

@@ -52,20 +52,24 @@ class recipe:
                         self.edit.append(dpg.add_input_text(default_value=dpg.get_value(self.labels[3])))
                 with dpg.group():
                     dpg.add_text(default_value="Input")
-                    with dpg.table(header_row=True,width=250):
+                    with dpg.table(header_row=True,width=250) as ITable:
                         dpg.add_table_column(width=150,label="Material")
                         dpg.add_table_column(width=100,label="Amount")
+                        for mat,amount in self.rec.inputs.items():
+                            self.addIO(ITable,mat,amount,l=self.inItems)
                     with dpg.group(horizontal=True,horizontal_spacing=10):
-                        dpg.add_button(label="Add")
+                        dpg.add_button(label="Add",callback = lambda:self.addIO(ITable,edit=True))
                         dpg.add_button(label="Edit")
                 with dpg.group():
                     dpg.add_text(default_value="Output")
-                    with dpg.table(header_row=True,width=250):
+                    with dpg.table(header_row=True,width=250) as OTable:
                         dpg.add_table_column(width=150,label="Material")
                         dpg.add_table_column(width=100,label="Amount")
+                        for mat,amount in self.rec.outputs.items():
+                            self.addIO(OTable,mat,amount,l=self.outItems)
                     with dpg.group(horizontal=True,horizontal_spacing=10):
-                        dpg.add_button(label="Add")
-                        dpg.add_button(label="Edit")
+                        dpg.add_button(label="Add",callback = lambda:self.addIO(OTable,edit=True))
+                        dpg.add_button(label="Edit",callback = lambda:print(self.outItems))
             with dpg.group(horizontal=True):
                 dpg.add_button(label="Save",width=75,callback=lambda s,a,u: self.saveRec(u),user_data=modal)
                 dpg.add_button(label="Cancel",width=75,callback=lambda s,a,u: dpg.configure_item(u,show=False),user_data=modal)
@@ -78,5 +82,21 @@ class recipe:
         self.rec.tier = dpg.get_value(self.edit[2])
         self.rec.duration = float(dpg.get_value(self.edit[3]))
         self.setLabels()
-    def editIO(self,items):
+    def addIO(self,table,mat:str = '',amount: int|float = 0,edit = False,l = []):
+        with dpg.table_row(parent=table) as row:
+            if not edit:
+                iMat = dpg.add_selectable(label=mat)
+                iVal = dpg.add_selectable(label=str(amount))
+                l.append((iMat,iVal))
+            else:
+                iMat = dpg.add_input_text(default_value=mat,callback=lambda: self.fixRow(row,l),on_enter=True)
+                iVal = dpg.add_input_text(default_value=str(amount),callback=lambda: self.fixRow(row,l),on_enter=True)
+    def fixRow(self, row,l):
+        children = unwrap(dpg.get_item_children(row,slot=1),[])
+        vals = [dpg.get_value(i) for i in children]
+        dpg.delete_item(row,children_only=True)
+        iMat = dpg.add_selectable(label=vals[0])
+        iVal = dpg.add_selectable(label=vals[1])
+        l.append((iMat,iVal))
+    def editOutput(self):
         pass
