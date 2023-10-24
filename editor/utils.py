@@ -73,9 +73,6 @@ def createTable(parent: int|str):
     with dpg.collapsing_header(parent=parent,label="Subfactories",indent=5):
         pass
 
-def _getIOMats(table):
-    pass
-
 def populateTable(cl:cluster,parent: int|str):
     items = dpg.get_item_children(parent,slot=1)
     assert(isinstance(items, list))

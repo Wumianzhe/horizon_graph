@@ -13,8 +13,7 @@ def main():
     with open(name + ".yaml") as file:
         obj = yaml.safe_load(file)
         with open(name + ".dot",'w') as out:
-            immObj = converter.utils.tuplify(obj)
-            convert(immObj,out)
+            convert(obj,out)
 
     subprocess.run(["dot",name + ".dot","-Tpdf","-o",name+".pdf"])
 

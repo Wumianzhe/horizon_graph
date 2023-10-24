@@ -5,7 +5,7 @@ import converter.utils as utils
 
 class line(cluster):
     def __init__(self,obj:dict,theme=defaultTheme):
-        self.buffers:dict[str,tuple[str,...]] = obj.get("buffers",{})
+        self.buffers:dict[str,tuple[str,...]] = obj.get("buffers",{"input":(),"output":()})
         self.prefix = "gl"
         self.tag = "top"
         self.theme = theme

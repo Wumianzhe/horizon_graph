@@ -1,48 +1,52 @@
+import os
+import sys
 from typing import Optional
 import yaml
-from converter.line import line  as prodLine
 import dearpygui.dearpygui as dpg
 import editor.utils as utils
-from editor.fileIO import loadfromfile,saveAsCallback,saveCallback
+from editor.line import line
 
-dpg.create_context()
-curr_line = prodLine({})
-fname:str = ""
+def main(filename:Optional[str]):
+    lineObj = line(filename)
+    with dpg.window(label="Example",tag="Primary window"):
+        with dpg.menu_bar():
+            with dpg.menu(label="Menu"):
+                with dpg.file_dialog(label="Open file", width=600, height=400, show=False, callback=
+                                     lambda s,a: lineObj.load(a), tag="fd_open"):
+                    dpg.add_file_extension(".yaml", color=(0, 255, 255, 255))
 
-yaml.emitter.Emitter.prepare_tag = lambda self, tag: ''
+                dpg.add_menu_item(label="Open",callback=lambda: dpg.show_item("fd_open"))
+                dpg.add_menu_item(label="Save",callback=lambda: lineObj.save())
+                dpg.add_menu_item(label="Save As",callback=lambda: lineObj.saveAs())
+        with dpg.group(horizontal=True):
+            dpg.add_collapsing_header(label="Production line",tag="lineRoot",default_open=True,user_data=lineObj)
+        utils.createTable("lineRoot")
+    lineObj.init_widgets()
 
-def loadWrap(sender,a):
-    global fname; fname = a["file_path_name"]
-    global curr_line; curr_line = loadfromfile(fname)
-    init_widgets(curr_line)
+def debugBegin():
+    # I have no idea what the correct order of dpg commands is anymore
+    dpg.configure_app(manual_callback_management=True)
+    dpg.create_viewport()
+    dpg.setup_dearpygui()
+def debug():
+    pass
 
-def init_widgets(line:prodLine):
-    dpg.delete_item("lineRoot",children_only=True) # clear children
-    utils.createTable("lineRoot")
-    utils.populateTable(line,"lineRoot")
+if __name__ == '__main__':
+    yaml.emitter.Emitter.prepare_tag = lambda self, tag: ''
+    dpg.create_context()
 
+    if os.getenv("DEBUG"):
+        debugBegin()
+    else:
+        dpg.create_viewport()
+        dpg.setup_dearpygui()
 
-with dpg.theme() as borderless_child_theme:
-    with dpg.theme_component(dpg.mvChildWindow):
-        dpg.add_theme_color(dpg.mvThemeCol_Border, [0, 0, 0, 0])
-
-dpg.create_viewport()
-dpg.setup_dearpygui()
-
-with dpg.window(label="Example",tag="Primary window"):
-    with dpg.menu_bar():
-        with dpg.menu(label="Menu"):
-            with dpg.file_dialog(label="Open file", width=600, height=400, show=False, callback=loadWrap, tag="fd_open"):
-                dpg.add_file_extension(".yaml", color=(0, 255, 255, 255))
-
-            dpg.add_menu_item(label="Open",callback=lambda: dpg.show_item("fd_open"))
-            dpg.add_menu_item(label="Save",callback=lambda: saveCallback(fname,curr_line))
-            dpg.add_menu_item(label="Save As",callback=saveAsCallback)
-    with dpg.group(horizontal=True):
-        dpg.add_collapsing_header(label="Production line",tag="lineRoot",default_open=True)
-    utils.createTable("lineRoot")
-
-dpg.show_viewport()
-dpg.set_primary_window("Primary window",True)
-dpg.start_dearpygui()
-dpg.destroy_context()
+    try:
+        fname = sys.argv[1]
+    except IndexError:
+        fname = None
+    main(fname)
+    dpg.show_viewport()
+    dpg.set_primary_window("Primary window",True)
+    dpg.start_dearpygui()
+    dpg.destroy_context()
