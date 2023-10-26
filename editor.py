@@ -29,6 +29,11 @@ def debugBegin():
     dpg.create_viewport()
     dpg.setup_dearpygui()
 def debug():
+    while dpg.is_dearpygui_running():
+        jobs = dpg.get_callback_queue()
+        if jobs:
+            dpg.run_callbacks(jobs)
+        dpg.render_dearpygui_frame()
     pass
 
 if __name__ == '__main__':
@@ -40,7 +45,6 @@ if __name__ == '__main__':
     else:
         dpg.create_viewport()
         dpg.setup_dearpygui()
-
     try:
         fname = sys.argv[1]
     except IndexError:
@@ -48,5 +52,8 @@ if __name__ == '__main__':
     main(fname)
     dpg.show_viewport()
     dpg.set_primary_window("Primary window",True)
-    dpg.start_dearpygui()
+    if os.getenv("DEBUG"):
+        debug()
+    else:
+        dpg.start_dearpygui()
     dpg.destroy_context()
